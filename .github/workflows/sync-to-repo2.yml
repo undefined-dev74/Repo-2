@@ -1,3 +1,46 @@
+# name: Sync to Repo-2
+# on:
+#   push:
+#     branches:
+#       - main
+
+# jobs:
+#   sync:
+#     runs-on: ubuntu-latest
+#     if: "!contains(github.event.head_commit.message, '[sync-skip]')"
+    
+#     steps:
+#       - name: Checkout Repo-1 (source)
+#         uses: actions/checkout@v4
+#         with:
+#           fetch-depth: 0
+#           token: ${{ secrets.TARGET_REPO_PAT }}
+      
+#       - name: Set up Git
+#         run: |
+#           git config --global user.name "github-actions[bot]"
+#           git config --global user.email "github-actions[bot]@users.noreply.github.com"
+      
+#       - name: Clone target repository (Repo-2)
+#         run: |
+#           git clone https://x-access-token:${{ secrets.TARGET_REPO_PAT }}@github.com/undefined-dev74/Repo-2.git
+      
+#       - name: Sync and push
+#         run: |
+#           rsync -av --exclude='.git' --exclude='Repo-2' ./ Repo-2/
+#           cd Repo-2
+#           git add .
+          
+#           if git diff --staged --quiet; then
+#             echo "No changes to commit"
+#             exit 0
+#           fi
+          
+#           git commit -m "Sync from Repo1 [sync-skip]"
+#           git push origin main
+
+# NEW CODE
+
 name: Sync to Repo-2
 on:
   push:
@@ -7,34 +50,60 @@ on:
 jobs:
   sync:
     runs-on: ubuntu-latest
+    # Prevent infinite loops by checking commit message
     if: "!contains(github.event.head_commit.message, '[sync-skip]')"
     
     steps:
-      - name: Checkout Repo-1 (source)
+      - name: Checkout Repo1 (source)
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           token: ${{ secrets.TARGET_REPO_PAT }}
       
-      - name: Set up Git
+      - name: Set up Git configuration
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
       
       - name: Clone target repository (Repo-2)
         run: |
+          echo "Cloning target repository..."
           git clone https://x-access-token:${{ secrets.TARGET_REPO_PAT }}@github.com/undefined-dev74/Repo-2.git
+          echo "✅ Successfully cloned Repo-2"
       
-      - name: Sync and push
+      - name: Sync files to target repository
         run: |
+          echo "Syncing files from Repo1 to Repo-2..."
+          # Copy all files except .git directory and target repo directory
           rsync -av --exclude='.git' --exclude='Repo-2' ./ Repo-2/
+          echo "✅ Files synced successfully"
+      
+      - name: Commit and push changes
+        run: |
           cd Repo-2
+          
+          # Check current status
+          echo "Checking repository status..."
+          git status
+          
+          # Add all changes
           git add .
           
+          # Check if there are changes to commit
           if git diff --staged --quiet; then
-            echo "No changes to commit"
+            echo "ℹ️ No changes to commit"
             exit 0
           fi
           
-          git commit -m "Sync from Repo1 [sync-skip]"
+          # Commit with sync-skip marker to prevent infinite loop
+          echo "Committing changes..."
+          git commit -m "Sync from Repo1 [sync-skip]
+
+          🔄 Auto-sync from Repo1
+          Original commit: ${{ github.sha }}
+          Original message: ${{ github.event.head_commit.message }}"
+          
+          # Push to main branch
+          echo "Pushing changes to Repo-2..."
           git push origin main
+          echo "✅ Successfully synced Repo1 → Repo-2"
