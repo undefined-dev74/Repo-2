@@ -37,7 +37,7 @@ jobs:
       - name: Commit and push changes
         run: |
           # Change to the TARGET repository directory
-          cd Repo1
+          cd Repo-1
           
           # Check current status
           git status
