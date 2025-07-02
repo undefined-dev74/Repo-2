@@ -24,14 +24,14 @@ jobs:
       - name: Clone target repository (Repo1)
         run: |
           # Clone the TARGET repository (Repo1), not the source (Repo-2)
-          git clone https://x-access-token:${{ secrets.TARGET_REPO_PAT }}@github.com/undefined-dev74/Repo1.git
+          git clone https://x-access-token:${{ secrets.TARGET_REPO_PAT }}@github.com/undefined-dev74/Repo-1.git
           echo "Successfully cloned target repository"
       
       - name: Sync files to target repo
         run: |
           # Copy files from current directory (Repo-2) to target (Repo1)
           # Exclude the target directory to prevent recursion
-          rsync -av --exclude='.git' --exclude='Repo1' ./ Repo1/
+          rsync -av --exclude='.git' --exclude='Repo-1' ./ Repo-1/
           echo "Files synced successfully"
       
       - name: Commit and push changes
