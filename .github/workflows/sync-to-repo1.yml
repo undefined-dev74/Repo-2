@@ -1,0 +1,51 @@
+name: Sync to Repo1
+on:
+  push:
+    branches:
+      - main
+      
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    # Prevent infinite loops by checking commit message
+    if: "!contains(github.event.head_commit.message, '[sync-skip]')"
+    
+    steps:
+      - name: Checkout source repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch full history
+          token: ${{ secrets.TARGET_REPO_PAT }}
+      
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+      
+      - name: Clone target repository
+        run: |
+          git clone https://x-access-token:${{ secrets.TARGET_REPO_PAT }}@github.com/undefined-dev74/Repo-1.git target-repo
+          
+      - name: Sync files
+        run: |
+          # Copy all files except .git directory
+          rsync -av --exclude='.git' ./ target-repo/
+          
+      - name: Commit and push to target repo
+        run: |
+          cd target-repo
+          git add .
+          
+          # Check if there are changes to commit
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          
+          # Commit with sync-skip to prevent infinite loop
+          git commit -m "Sync from repo2 [sync-skip]
+
+          Original commit: ${{ github.sha }}
+          Original message: ${{ github.event.head_commit.message }}"
+          
+          git push origin main
