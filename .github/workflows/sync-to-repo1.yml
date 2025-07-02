@@ -1,3 +1,67 @@
+# name: Sync to Repo1
+# on:
+#   push:
+#     branches:
+#       - main
+
+# jobs:
+#   sync:
+#     runs-on: ubuntu-latest
+#     if: "!contains(github.event.head_commit.message, '[sync-skip]')"
+    
+#     steps:
+#       - name: Checkout Repo-2 (source)
+#         uses: actions/checkout@v4
+#         with:
+#           fetch-depth: 0
+#           token: ${{ secrets.TARGET_REPO_PAT }}
+      
+#       - name: Set up Git
+#         run: |
+#           git config --global user.name "github-actions[bot]"
+#           git config --global user.email "github-actions[bot]@users.noreply.github.com"
+      
+#       - name: Clone target repository (Repo1)
+#         run: |
+#           # Clone the TARGET repository (Repo1), not the source (Repo-2)
+#           git clone https://x-access-token:${{ secrets.TARGET_REPO_PAT }}@github.com/undefined-dev74/Repo-1.git
+#           echo "Successfully cloned target repository"
+      
+#       - name: Sync files to target repo
+#         run: |
+#           # Copy files from current directory (Repo-2) to target (Repo1)
+#           # Exclude the target directory to prevent recursion
+#           rsync -av --exclude='.git' --exclude='Repo-1' ./ Repo-1/
+#           echo "Files synced successfully"
+      
+#       - name: Commit and push changes
+#         run: |
+#           # Change to the TARGET repository directory
+#           cd Repo-1
+          
+#           # Check current status
+#           git status
+          
+#           # Add all changes
+#           git add .
+          
+#           # Check if there are changes to commit
+#           if git diff --staged --quiet; then
+#             echo "No changes to commit"
+#             exit 0
+#           fi
+          
+#           # Commit with sync-skip to prevent infinite loop
+#           git commit -m "Sync from Repo-2 [sync-skip]
+
+#           Original commit: ${{ github.sha }}
+#           Original message: ${{ github.event.head_commit.message }}"
+          
+#           # Push to main branch
+#           git push origin main
+#           echo "Successfully pushed changes to Repo1"
+
+
 name: Sync to Repo1
 on:
   push:
@@ -60,3 +124,4 @@ jobs:
           # Push to main branch
           git push origin main
           echo "Successfully pushed changes to Repo1"
+
