@@ -1,0 +1,32 @@
+name: Sync to Repo1
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo1
+        uses: actions/checkout@v3
+
+      - name: Set up Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Clone repo2
+        run: |
+          git clone https://x-access-token:${{ secrets.TARGET_REPO_PAT }}@github.com/undefined-dev74/Repo-2.git
+          cd repo2
+          # Do the sync - copy files, commit, etc.
+
+      - name: Commit and Push
+        run: |
+          cd repo2
+          git add .
+          git commit -m "Sync from repo1" || echo "Nothing to commit"
+          git push
