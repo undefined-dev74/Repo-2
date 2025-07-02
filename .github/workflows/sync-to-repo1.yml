@@ -23,10 +23,10 @@ jobs:
       
       - name: Clone and sync to repo1
         run: |
-          git clone https://x-access-token:${{ secrets.TARGET_REPO_PAT }}@github.com/undefined-dev74/repo1.git
+          git clone https://x-access-token:${{ secrets.TARGET_REPO_PAT }}@github.com/undefined-dev74/Repo-2.git
           
           # Copy files to repo1 (assuming repo1 directory name)
-          rsync -av --exclude='.git' --exclude='repo1' ./ repo1/
+          rsync -av --exclude='.git' --exclude='Repo-1' ./ Repo-1/
           
           cd repo1
           git add .
