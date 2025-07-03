@@ -89,14 +89,14 @@ jobs:
       - name: Clone target repository (Repo1)
         run: |
           echo "Cloning target repository..."
-          git clone https://x-access-token:${{ secrets.TARGET_REPO_PAT }}@github.com/undefined-dev74/Repo1.git
+          git clone https://x-access-token:${{ secrets.TARGET_REPO_PAT }}@github.com/undefined-dev74/Repo-1.git
           echo "✅ Successfully cloned Repo1"
       
       - name: Sync files to target repository
         run: |
-          echo "Syncing files from Repo-2 to Repo1..."
+          echo "Syncing files from Repo-2 to Repo -1..."
           # Copy all files except .git directory and target repo directory
-          rsync -av --exclude='.git' --exclude='Repo1' ./ Repo1/
+          rsync -av --exclude='.git' --exclude='Repo-1' ./ Repo-1/
           echo "✅ Files synced successfully"
       
       - name: Show what will be synced

@@ -78,15 +78,13 @@ jobs:
           rsync -av --exclude='.git' --exclude='Repo-2' ./ Repo-2/
           echo "✅ Files synced successfully"
       
-      - name: Show what will be synced
-        run: |
-          cd Repo-2
-          echo "Files that will be added/modified:"
-          git status --porcelain
-      
       - name: Commit and push changes
         run: |
           cd Repo-2
+          
+          # Check current status
+          echo "Checking repository status..."
+          git status
           
           # Add all changes
           git add .
@@ -97,12 +95,13 @@ jobs:
             exit 0
           fi
           
-          # Commit with properly formatted multi-line message
+          # Commit with sync-skip marker to prevent infinite loop
           echo "Committing changes..."
-          git commit -m "Sync from Repo1 [sync-skip]" \
-                     -m "🔄 Auto-sync from Repo1" \
-                     -m "Original commit: ${{ github.sha }}" \
-                     -m "Original message: ${{ github.event.head_commit.message }}"
+          git commit -m "Sync from Repo1 [sync-skip]
+
+          🔄 Auto-sync from Repo1
+          Original commit: ${{ github.sha }}
+          Original message: ${{ github.event.head_commit.message }}"
           
           # Push to main branch
           echo "Pushing changes to Repo-2..."
