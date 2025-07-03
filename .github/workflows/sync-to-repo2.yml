@@ -97,7 +97,7 @@ jobs:
           
           # Commit with sync-skip marker to prevent infinite loop
           echo "Committing changes..."
-          git commit -m "Sync from Repo1 [sync-skip]
+          git commit -m "Sync from Repo-1 [sync-skip]
 
           🔄 Auto-sync from Repo1
           Original commit: ${{ github.sha }}
